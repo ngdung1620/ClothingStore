@@ -34,8 +34,7 @@ namespace ClothingStoreBackend.Models
                 .HasOne<Size>(ps => ps.Size)
                 .WithMany(s => s.ProductSizes)
                 .HasForeignKey(ps => ps.SizeId);
-
-            modelBuilder.Entity<ProductCart>().HasKey(pc => new { pc.CartId, pc.ProductId });
+            
             modelBuilder.Entity<ProductCart>()
                 .HasOne<Product>(pc => pc.Product)
                 .WithMany(p => p.ProductCarts)

@@ -209,6 +209,10 @@ namespace ClothingStoreBackend.Migrations
 
             modelBuilder.Entity("ClothingStoreBackend.Models.ProductCart", b =>
                 {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CartId")
                         .HasColumnType("uuid");
 
@@ -218,7 +222,12 @@ namespace ClothingStoreBackend.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.HasKey("CartId", "ProductId");
+                    b.Property<int>("Size")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
 
                     b.HasIndex("ProductId");
 

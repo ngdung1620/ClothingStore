@@ -30,6 +30,11 @@ namespace ClothingStoreBackend.Controllers
             return Ok( _productService.GetListProduct(request));
         }
 
+        [HttpGet("get-all-product")]
+        public async Task<IActionResult> GetAllProduct()
+        {
+            return Ok(await _productService.GetAllProduct());
+        }
         [HttpGet("get-product/{id}")]
         public async Task<IActionResult> GetProduct(Guid id)
         {
@@ -47,5 +52,6 @@ namespace ClothingStoreBackend.Controllers
         {
             return Ok(await _productService.EditProduct(request));
         }
+        
     }
 }

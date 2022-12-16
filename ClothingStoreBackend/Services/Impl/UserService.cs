@@ -39,17 +39,27 @@ namespace ClothingStoreBackend.Services.Impl
             var user = await _userManager.FindByNameAsync(request.Email);
             if (user == null)
             {
-                throw new Exception("Email không chính xác!");
+                return new LoginResponse()
+                {
+                    Status = -1,
+                    Message = "Tài khoản hoặc mật khẩu không chính xác !"
+                };
             }
 
             var loginResponse = await _userManager.CheckPasswordAsync(user, request.Password);
-            var token = await GenerateTokenJwt(user);
             if (!loginResponse)
             {
-                throw new Exception("Mật khẩu không chính xác !");
+                return new LoginResponse()
+                {
+                    Status = -1,
+                    Message = "Mật khẩu không chính xác !"
+                };
             }
+            var token = await GenerateTokenJwt(user);
             return new LoginResponse
             {
+                Status = 1,
+                Message = "Đăng nhập thành công",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
             };
         }
@@ -248,6 +258,7 @@ namespace ClothingStoreBackend.Services.Impl
                         authClaims.Add(claim);
                     }
                 }
+                authClaims.Add(new Claim(ClaimTypes.Role, role));
             }
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(DefaultApplication.SecretKey));
             var token = new JwtSecurityToken(

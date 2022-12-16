@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClothingStoreBackend.Models.ProductModels;
 
 namespace ClothingStoreBackend.Models.CategoryModels
 {
@@ -7,6 +8,6 @@ namespace ClothingStoreBackend.Models.CategoryModels
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public List<Product> Products { get; set; }
+        public List<ProductResponse> Products { get; set; }
     }
 }

@@ -51,6 +51,20 @@ namespace ClothingStoreBackend.Services.Impl
             };
         }
 
+        public async Task<List<ProductResponse>> GetAllProduct()
+        {
+            var listProduct = await _context.Products.Select(p => new ProductResponse()
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Price = p.Price,
+                Description = p.Description,
+                Total = p.Total,
+                Img = _configuration["Img:UrlImg"] + p.Img
+            }).ToListAsync();
+            return listProduct;
+        }
+
         public async Task<GetProductResponse> GetProduct(Guid id)
         {
             var product = await _context.Products

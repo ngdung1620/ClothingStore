@@ -5,16 +5,19 @@ using System.Threading.Tasks;
 using ClothingStoreBackend.Models;
 using ClothingStoreBackend.Models.CategoryModels;
 using Microsoft.EntityFrameworkCore;
+using ClothingStoreBackend.Models.ProductModels;
+using Microsoft.Extensions.Configuration;
 
 namespace ClothingStoreBackend.Services.Impl
 {
     public class CategoryService: ICategoryService
     {
         private readonly MasterDbContext _context;
-
-        public CategoryService(MasterDbContext context)
+        private readonly IConfiguration _configuration;
+        public CategoryService(MasterDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<List<GetListCategoryResponse>> GetListCategory()
@@ -33,17 +36,33 @@ namespace ClothingStoreBackend.Services.Impl
 
         public async Task<GetCategoryResponse> GetCategory(Guid id)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Id == id);
             if (category == null)
             {
                 throw new Exception("Thể loại này không tồn tại ");
             }
 
+            var products = new List<ProductResponse>();
+            category.Products.ForEach(p =>
+            {
+                var product = new ProductResponse()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Total = p.Total,
+                    Img = _configuration["Img:UrlImg"] + p.Img,
+                };
+                products.Add(product);
+            });
             return new GetCategoryResponse()
             {
                 Id = category.Id,
                 Name = category.Name,
-                Products = category.Products
+                Products = products
             };
         }
 

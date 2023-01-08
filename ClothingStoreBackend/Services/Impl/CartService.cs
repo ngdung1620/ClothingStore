@@ -6,6 +6,7 @@ using ClothingStoreBackend.Models;
 using ClothingStoreBackend.Models.CartModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ClothingStoreBackend.Services.Impl
 {
@@ -13,11 +14,13 @@ namespace ClothingStoreBackend.Services.Impl
     {
         private readonly MasterDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        public CartService(MasterDbContext context, UserManager<ApplicationUser> userManager)
+        public CartService(MasterDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _context = context;
             _userManager = userManager;
+            _configuration = configuration;
         }
 
         public async Task<AddProductToCartResponse> AddProductToCart(AddProductToCartRequest request)
@@ -80,21 +83,16 @@ namespace ClothingStoreBackend.Services.Impl
                 {
                     throw new Exception("Sản phẩm không tồn tại");
                 }
-
-                var productDetail = new ProductDetail()
-                {
-                    ProductId = product.Id,
-                    Name = product.Name,
-                    Price = product.Price,
-                    Description = product.Description,
-                    Img = product.Img,
-                    Size = pc.Size
-                };
                 var productCart = new GetCartResponse()
                 {
                     Id = pc.Id,
                     Quantity = pc.Quantity,
-                    ProductDetail = productDetail
+                    ProductId = product.Id,
+                    Name = product.Name,
+                    Price = product.Price,
+                    Description = product.Description,
+                    Img = _configuration["Img:UrlImg"] + product.Img,
+                    Size = pc.Size
                 };
                 listProductCart.Add(productCart);
             });

@@ -10,7 +10,6 @@ namespace ClothingStoreBackend.Models
         public int Gender { get; set; }
         public DateTime DoB { get; set; }
         public string Address { get; set; }
-        public Guid? CartId { get; set; } 
         public Cart Cart { get; set; }
     }
 }

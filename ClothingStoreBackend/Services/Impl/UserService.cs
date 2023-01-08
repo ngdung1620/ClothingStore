@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using ClothingStoreBackend.Models;
+using ClothingStoreBackend.Models.CartModels;
 using ClothingStoreBackend.Models.RequestModels;
 using ClothingStoreBackend.Models.ResponseModels;
 using ClothingStoreBackend.Settings;
@@ -97,6 +98,7 @@ namespace ClothingStoreBackend.Services.Impl
 
                 return new CreateUserResponse()
                 {
+                    Status = -1,
                     Message = string.Join(", ", errors)
                 };
             }
@@ -167,12 +169,20 @@ namespace ClothingStoreBackend.Services.Impl
 
         public async Task<UserResponse> GetUser(Guid id)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager
+                .FindByIdAsync(id.ToString());
             if (user == null)
             {
                 throw new Exception("Tài khoản không tồn tại");
             }
-
+            var cart = await _context.Carts
+                .Include(c => c.ProductCarts)
+                .FirstOrDefaultAsync(c => c.UserId == id);
+            if (cart == null)
+            {
+                throw new Exception("Giỏ hàng không tồn tại");
+            }
+            
             var roles = await _userManager.GetRolesAsync(user);
             return new UserResponse()
             {
@@ -183,6 +193,8 @@ namespace ClothingStoreBackend.Services.Impl
                 PhoneNumber = user.PhoneNumber,
                 Address = user.Address,
                 Email = user.Email,
+                CartId = cart.Id,
+                TotalItemInCart = cart.ProductCarts.Count,
                 Roles = roles
             };
         }

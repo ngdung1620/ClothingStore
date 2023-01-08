@@ -10,5 +10,6 @@ namespace ClothingStoreBackend.Models.ProductModels
         public string Description { get; set; }
         public int Total { get; set; }
         public string Img { get; set; }
+        public DateTime PublicationDate { get; set; }
     }
 }

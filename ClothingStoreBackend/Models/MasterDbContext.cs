@@ -43,6 +43,11 @@ namespace ClothingStoreBackend.Models
                 .HasOne<Cart>(pc => pc.Cart)
                 .WithMany(c => c.ProductCarts)
                 .HasForeignKey(pc => pc.CartId);
+            
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(u => u.Cart)
+                .WithOne(c => c.ApplicationUser)
+                .HasForeignKey<Cart>(b => b.UserId);
         }
     }
 }

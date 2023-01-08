@@ -125,6 +125,7 @@ namespace ClothingStoreBackend.Services.Impl
             {
                 throw new Exception("Category không tồn tại");
             }
+            
             var product = new Product()
             {
                 Id = Guid.NewGuid(),
@@ -133,6 +134,8 @@ namespace ClothingStoreBackend.Services.Impl
                 Description = request.Description,
                 Total = request.Total,
                 Img = fileName,
+                PublicationDate = DateTime.Now,
+                Sold = 0,
                 Category = category
             };
 
@@ -162,6 +165,7 @@ namespace ClothingStoreBackend.Services.Impl
                 Description = product.Description,
                 Total = product.Total,
                 Img = _configuration["Img:UrlImg"]+ product.Img,
+                PublicationDate = product.PublicationDate
             };
         }
 

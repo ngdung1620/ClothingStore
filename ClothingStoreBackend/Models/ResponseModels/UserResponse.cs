@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ClothingStoreBackend.Models.CartModels;
 
 namespace ClothingStoreBackend.Models.ResponseModels
 {
@@ -12,6 +13,8 @@ namespace ClothingStoreBackend.Models.ResponseModels
         public string PhoneNumber { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public Guid CartId { get; set; }
+        public int TotalItemInCart { get; set; }
         public IList<string> Roles { get; set; }
     }
 }

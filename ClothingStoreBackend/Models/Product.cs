@@ -11,6 +11,8 @@ namespace ClothingStoreBackend.Models
         public string Description { get; set; }
         public int Total { get; set; }
         public string Img { get; set; }
+        public DateTime PublicationDate { get; set; }
+        public int Sold { get; set; }
 
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }

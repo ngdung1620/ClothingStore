@@ -16,6 +16,9 @@ namespace ClothingStoreBackend.Models
         public DbSet<ProductSize> ProductSizes { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<ProductCart> ProductCarts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; set; }
+        
         
 
 

@@ -13,12 +13,13 @@ namespace ClothingStoreBackend.Models
         public string Img { get; set; }
         public DateTime PublicationDate { get; set; }
         public int Sold { get; set; }
-
+        public int Selling { get; set; }
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
 
         public List<ProductSize> ProductSizes { get; set; }
 
         public List<ProductCart> ProductCarts { get; set; }
+        public List<ProductOrder> ProductOrders { get; set; }
     }
 }

@@ -43,6 +43,7 @@ namespace ClothingStoreBackend
             services.AddScoped<ISizeService, SizeService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IOrderService, OrderService>();
             // cau hinh DB, Cau hinh services
             services.AddDbContext<MasterDbContext>(options =>
                 options.UseNpgsql(Configuration["PostgresSQL:ConnectionString"])

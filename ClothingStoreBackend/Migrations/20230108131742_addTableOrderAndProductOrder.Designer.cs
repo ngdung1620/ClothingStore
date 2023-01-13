@@ -3,15 +3,17 @@ using System;
 using ClothingStoreBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ClothingStoreBackend.Migrations
 {
     [DbContext(typeof(MasterDbContext))]
-    partial class MasterDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230108131742_addTableOrderAndProductOrder")]
+    partial class addTableOrderAndProductOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,14 +196,8 @@ namespace ClothingStoreBackend.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<double>("ShippingFee")
-                        .HasColumnType("double precision");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 
@@ -233,9 +229,6 @@ namespace ClothingStoreBackend.Migrations
 
                     b.Property<DateTime>("PublicationDate")
                         .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("Selling")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Sold")
                         .HasColumnType("integer");
@@ -294,9 +287,6 @@ namespace ClothingStoreBackend.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Size")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

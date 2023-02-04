@@ -52,6 +52,17 @@ namespace ClothingStoreBackend.Controllers
         {
             return Ok(await _productService.EditProduct(request));
         }
+
+        [HttpGet("get-selling-product")]
+        public async Task<IActionResult> GetSellingProduct()
+        {
+            return Ok(await _productService.GetSellingProduct());
+        }
         
+        [HttpGet("get-new-product")]
+        public async Task<IActionResult> GetNewProduct()
+        {
+            return Ok(await _productService.GetNewProduct());
+        }
     }
 }

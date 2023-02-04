@@ -11,5 +11,9 @@ namespace ClothingStoreBackend.Services
         Task<CheckOutResponse> CheckOutDontHaveAccount(CheckOutDontHaveAccountRequest request);
         Task<GetOrderResponse> GetOrder(Guid id);
         Task<List<GetOrderByUserIdResponse>> GetOrderByUserId(Guid id);
+        Task<List<GetOrderWaitHandleResponse>> GetOrderWaitHandle();
+        GetOrderOptionResponse GetOrderOption(GetOrderOptionRequest request);
+        Task<ChangeStatusResponse> ChangeStatus(ChangeStatusRequest request);
+        Task<List<OrderModel>> Revenue(RevenueRequest request);
     }
 }

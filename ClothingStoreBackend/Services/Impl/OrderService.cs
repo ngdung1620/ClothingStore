@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClothingStoreBackend.Models;
 using ClothingStoreBackend.Models.OrderModels;
+using ClothingStoreBackend.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,13 @@ namespace ClothingStoreBackend.Services.Impl
 {
     public class OrderService: IOrderService
     {
+            /*
+             * 1: Chờ Xử lí
+             * 2: Đang chuẩn bị hàng
+             * 3: Đang Giao
+             * 4: Hoàn thành
+             * -1: Đã Huỷ
+             */
         private readonly MasterDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IConfiguration _configuration;
@@ -238,6 +246,191 @@ namespace ClothingStoreBackend.Services.Impl
                     OrderDate = o.OrderDate,
                     Status = o.Status,
                     TotalPrice = o.TotalPrice,
+                })
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+            return listOrder;
+        }
+
+        public async Task<List<GetOrderWaitHandleResponse>> GetOrderWaitHandle()
+        {
+            var listOrder = await _context.Orders
+                .Where(o => o.Status == 1)
+                .Select(o => new GetOrderWaitHandleResponse()
+                {
+                    OrderId = o.Id,
+                    OrderDate = o.OrderDate,
+                    Status = o.Status,
+                    TotalPrice = o.TotalPrice,
+                    ShippingFee = o.ShippingFee,
+                    CustomerName = o.CustomerName,
+                    PhoneNumber = o.PhoneNumber,
+                    Address = o.Address,
+                })
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+            return listOrder;
+
+        }
+
+        public GetOrderOptionResponse GetOrderOption(GetOrderOptionRequest request)
+        {
+            var allOrder = _context.Orders.AsQueryable();
+            if(!String.IsNullOrEmpty(request.Search))
+            {
+                allOrder = allOrder
+                    .Where(o => o.Id.ToString().ToLower().Contains(request.Search)
+                                || o.CustomerName.ToLower().Contains(request.Search)
+                                || o.PhoneNumber.Contains(request.Search));
+            }
+
+            if (request.Status != 0)
+            {
+                allOrder = allOrder.Where(o => o.Status == request.Status);
+            }
+            var result = PaginatedList<Order>.Create(allOrder, request.PageIndex, request.PageSize);
+            var listOrder = result.Select(o => new OrderModel()
+            {
+                OrderId = o.Id,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                TotalPrice = o.TotalPrice,
+                ShippingFee = o.ShippingFee,
+                CustomerName = o.CustomerName,
+                PhoneNumber = o.PhoneNumber,
+                Address = o.Address,
+            })
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
+            return  new GetOrderOptionResponse()
+            {
+                ListOrder = listOrder,
+                TotalPage = result.TotalPage,
+                PageIndex = result.PageIndex,
+                PageSize = result.PageSize,
+                TotalRecords = allOrder.Count(),
+            };
+        }
+
+        public async Task<ChangeStatusResponse> ChangeStatus(ChangeStatusRequest request)
+        {
+            var order = await _context.Orders
+                .Include(o => o.ProductOrders)
+                .FirstOrDefaultAsync(o => o.Id == request.OrderId);
+            if (request.Status == -1)
+            {
+                switch (order.Status)
+                {
+                    case 4:
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Total += po.Quantity;
+                                product.Sold -= po.Quantity;
+                            }
+                        });
+                        break;
+                    case -1: break;
+                    default: 
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Total += po.Quantity;
+                                product.Selling -= po.Quantity;
+                            }
+                            
+                        });
+                        break;
+                }
+            }else 
+            if (request.Status == 4)
+            {
+                switch (order.Status)
+                {
+                    case -1:
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Total -= po.Quantity;
+                                product.Sold += po.Quantity;
+                            }
+                        });
+                        break;
+                    case 4: break;
+                    default: 
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Sold += po.Quantity;
+                                product.Selling -= po.Quantity;
+                            }
+                            
+                        });
+                        break;
+                }
+            }
+            else
+            {
+                switch (order.Status)
+                {
+                    
+                    case -1:
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Total -= po.Quantity;
+                                product.Selling += po.Quantity;
+                            }
+                            
+                        });
+                        break;
+                    case 4: 
+                        order.ProductOrders.ForEach(po =>
+                        {
+                            var product = _context.Products.FirstOrDefault(p => p.Id == po.ProductId);
+                            if (product != null)
+                            {
+                                product.Sold -= po.Quantity;
+                                product.Selling += po.Quantity;
+                            }
+                            
+                        });
+                        break;
+                }
+            }
+            order.Status = request.Status;
+            await _context.SaveChangesAsync();
+            return new ChangeStatusResponse()
+            {
+                Message = "Thay đổi trạng thái thành công"
+            };
+            
+        }
+
+        public async Task<List<OrderModel>> Revenue(RevenueRequest request)
+        {
+            var listOrder = await _context.Orders
+                .Where(o => o.Status == 4 && (o.OrderDate >= request.StartTime && o.OrderDate <= request.FinishTime))
+                .Select(o => new OrderModel()
+                {
+                    OrderId = o.Id,
+                    OrderDate = o.OrderDate,
+                    Status = o.Status,
+                    TotalPrice = o.TotalPrice,
+                    ShippingFee = o.ShippingFee,
+                    CustomerName = o.CustomerName,
+                    PhoneNumber = o.PhoneNumber,
+                    Address = o.Address,
                 })
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();

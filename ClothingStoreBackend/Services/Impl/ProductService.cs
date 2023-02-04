@@ -265,5 +265,45 @@ namespace ClothingStoreBackend.Services.Impl
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<ProductResponse>> GetSellingProduct()
+        {
+           var listProduct = await _context.Products
+               .Select(p => new ProductResponse()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Total = p.Total,
+                    Img = _configuration["Img:UrlImg"] + p.Img,
+                    PublicationDate = p.PublicationDate,
+                    Sold = p.Sold
+                })
+               .OrderByDescending(p => p.Sold)
+               .Take(10)
+               .ToListAsync();
+           return listProduct;
+        }
+
+        public async Task<List<ProductResponse>> GetNewProduct()
+        {
+            var listProduct = await _context.Products
+                .Select(p => new ProductResponse()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Total = p.Total,
+                    Img = _configuration["Img:UrlImg"] + p.Img,
+                    PublicationDate = p.PublicationDate,
+                    Sold = p.Sold
+                })
+                .OrderByDescending(p => p.PublicationDate)
+                .Take(10)
+                .ToListAsync();
+            return listProduct;
+        }
     }
 }

@@ -41,5 +41,28 @@ namespace ClothingStoreBackend.Controllers
         {
             return Ok(await _orderService.GetOrderByUserId(id));
         }
+
+        [HttpGet("get-order-wait-handle")]
+        public async Task<IActionResult> GetOrderWaitHandle()
+        {
+            return Ok(await _orderService.GetOrderWaitHandle());
+        }
+        [HttpPost("get-order-option")]
+        public IActionResult GetOrderOption(GetOrderOptionRequest request)
+        {
+            return Ok( _orderService.GetOrderOption(request));
+        }
+
+        [HttpPost("change-status")]
+        public async Task<IActionResult> ChangeStatus(ChangeStatusRequest request)
+        {
+            return Ok(await _orderService.ChangeStatus(request));
+        }
+
+        [HttpPost("revenue")]
+        public async Task<IActionResult> Revenue(RevenueRequest request)
+        {
+            return Ok(await _orderService.Revenue(request));
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace ClothingStoreBackend.Services
         Task<CreateProductResponse> CreateProduct(CreateProductRequest request);
         Task<EditProductResponse> EditProduct(EditProductRequest request);
         Task<bool> DeleteProduct(Guid id);
-     
+        Task<List<ProductResponse>> GetSellingProduct();
+        Task<List<ProductResponse>> GetNewProduct();
     }
 }

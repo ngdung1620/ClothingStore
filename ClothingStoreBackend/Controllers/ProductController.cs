@@ -64,5 +64,11 @@ namespace ClothingStoreBackend.Controllers
         {
             return Ok(await _productService.GetNewProduct());
         }
+
+        [HttpPost("search-product")]
+        public async Task<IActionResult> SearchProduct(SearchProductRequest request)
+        {
+            return Ok(await _productService.SearchProduct(request));
+        }
     }
 }

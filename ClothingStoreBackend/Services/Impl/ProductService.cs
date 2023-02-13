@@ -305,5 +305,24 @@ namespace ClothingStoreBackend.Services.Impl
                 .ToListAsync();
             return listProduct;
         }
+
+        public async Task<List<ProductResponse>> SearchProduct(SearchProductRequest request)
+        {
+            var listProduct = await _context.Products
+                .Where(p => p.Name.ToLower().Contains(request.Search.ToLower()))
+                .Select(p => new ProductResponse()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Total = p.Total,
+                    Img =  _configuration["Img:UrlImg"] + p.Img,
+                    Sold = p.Sold,
+                    PublicationDate = p.PublicationDate,
+                })
+                .ToListAsync();
+            return listProduct;
+        }
     }
 }

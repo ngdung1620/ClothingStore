@@ -419,22 +419,53 @@ namespace ClothingStoreBackend.Services.Impl
 
         public async Task<List<OrderModel>> Revenue(RevenueRequest request)
         {
-            var listOrder = await _context.Orders
-                .Where(o => o.Status == 4 && (o.OrderDate >= request.StartTime && o.OrderDate <= request.FinishTime))
-                .Select(o => new OrderModel()
-                {
-                    OrderId = o.Id,
-                    OrderDate = o.OrderDate,
-                    Status = o.Status,
-                    TotalPrice = o.TotalPrice,
-                    ShippingFee = o.ShippingFee,
-                    CustomerName = o.CustomerName,
-                    PhoneNumber = o.PhoneNumber,
-                    Address = o.Address,
-                })
-                .OrderByDescending(o => o.OrderDate)
-                .ToListAsync();
+            List<OrderModel> listOrder;
+            if (request.OptionUpdate == 1)
+            {
+                listOrder = await _context.Orders
+                .Where(o => o.Status == 4 && (o.OrderDate.Month >= request.StartTime.Month &&
+                                              o.OrderDate.Month <= request.FinishTime.Month &&
+                                              o.OrderDate.Year >= request.StartTime.Year &&
+                                              o.OrderDate.Year <= request.FinishTime.Year))
+                    .Select(o => new OrderModel()
+                    {
+                        OrderId = o.Id,
+                        OrderDate = o.OrderDate,
+                        Status = o.Status,
+                        TotalPrice = o.TotalPrice,
+                        ShippingFee = o.ShippingFee,
+                        CustomerName = o.CustomerName,
+                        PhoneNumber = o.PhoneNumber,
+                        Address = o.Address,
+                    })
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
+            }
+            else
+            {
+                listOrder = await _context.Orders
+                    .Where(o => o.Status == 4 && (o.OrderDate >= request.StartTime && o.OrderDate <= request.FinishTime))
+                    .Select(o => new OrderModel()
+                    {
+                        OrderId = o.Id,
+                        OrderDate = o.OrderDate,
+                        Status = o.Status,
+                        TotalPrice = o.TotalPrice,
+                        ShippingFee = o.ShippingFee,
+                        CustomerName = o.CustomerName,
+                        PhoneNumber = o.PhoneNumber,
+                        Address = o.Address,
+                    })
+                    .OrderByDescending(o => o.OrderDate)
+                    .ToListAsync();
+            }
             return listOrder;
+        }
+
+        public DateTime GetMonthAndYear(DateTime time)
+        {
+            var formatTime = time.Year + "-"+ time.Month;
+            return DateTime.Parse(formatTime);
         }
     }
 }

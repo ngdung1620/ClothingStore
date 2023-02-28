@@ -9,8 +9,10 @@ namespace ClothingStoreBackend.Services
     {
         Task<List<GetListCategoryResponse>> GetListCategory();
         Task<GetCategoryResponse> GetCategory(Guid id);
+        Task<GetCategoryResponse> GetCategoryByOption(GetCategoryByOption request);
         Task<CreateCategoryResponse> CreateCategory(CreateCategoryRequest request);
         Task<EditCategoryResponse> EditCategory(EditCategoryRequest request);
         Task<bool> DeleteCategory(Guid id);
+        
     }
 }

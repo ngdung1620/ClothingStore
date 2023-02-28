@@ -9,7 +9,7 @@ namespace ClothingStoreBackend.Services
     public interface IProductService
     {
         GetListProductResponse GetListProduct(GetListProductRequest request);
-        Task<List<ProductResponse>> GetAllProduct();
+        Task<List<ProductResponse>> GetAllProduct(GetAllProductRequest request);
         Task<GetProductResponse> GetProduct(Guid id);
         Task<CreateProductResponse> CreateProduct(CreateProductRequest request);
         Task<EditProductResponse> EditProduct(EditProductRequest request);

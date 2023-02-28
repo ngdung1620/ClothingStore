@@ -51,17 +51,76 @@ namespace ClothingStoreBackend.Services.Impl
             };
         }
 
-        public async Task<List<ProductResponse>> GetAllProduct()
+        public async Task<List<ProductResponse>> GetAllProduct(GetAllProductRequest request)
         {
-            var listProduct = await _context.Products.Select(p => new ProductResponse()
+            List<ProductResponse> listProduct;
+            if (request.OptionSelect == 0)
             {
-                Id = p.Id,
-                Name = p.Name,
-                Price = p.Price,
-                Description = p.Description,
-                Total = p.Total,
-                Img = _configuration["Img:UrlImg"] + p.Img
-            }).ToListAsync();
+                listProduct = await _context.Products
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"] + p.Img,
+                        PublicationDate = p.PublicationDate,
+                        Sold = p.Sold
+                    })
+                    .OrderByDescending(p => p.PublicationDate)
+                    .ToListAsync();
+            } else if(request.OptionSelect == 1)
+            {
+                listProduct = await _context.Products
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"] + p.Img,
+                        PublicationDate = p.PublicationDate,
+                        Sold = p.Sold
+                    })
+                    .OrderByDescending(p => p.Sold)
+                    .ToListAsync();
+            }else if (request.OptionSelect == 2)
+            {
+                 listProduct = await _context.Products
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"] + p.Img,
+                        PublicationDate = p.PublicationDate,
+                        Sold = p.Sold
+                    })
+                    .OrderBy(p => p.Price)
+                    .ToListAsync();
+            }
+            else
+            {
+                listProduct = await _context.Products
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"] + p.Img,
+                        PublicationDate = p.PublicationDate,
+                        Sold = p.Sold
+                    })
+                    .OrderByDescending(p => p.Price)
+                    .ToListAsync();
+            }
+             
             return listProduct;
         }
 

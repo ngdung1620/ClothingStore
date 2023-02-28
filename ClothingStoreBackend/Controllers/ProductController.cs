@@ -30,10 +30,10 @@ namespace ClothingStoreBackend.Controllers
             return Ok( _productService.GetListProduct(request));
         }
 
-        [HttpGet("get-all-product")]
-        public async Task<IActionResult> GetAllProduct()
+        [HttpPost("get-all-product")]
+        public async Task<IActionResult> GetAllProduct(GetAllProductRequest request)
         {
-            return Ok(await _productService.GetAllProduct());
+            return Ok(await _productService.GetAllProduct(request));
         }
         [HttpGet("get-product/{id}")]
         public async Task<IActionResult> GetProduct(Guid id)

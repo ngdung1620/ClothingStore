@@ -29,6 +29,12 @@ namespace ClothingStoreBackend.Controllers
             return Ok(await _categoryService.GetCategory(id));
         }
 
+        [HttpPost("get-category-by-option")]
+        public async Task<IActionResult> GetCategoryByOption(GetCategoryByOption request)
+        {
+            return Ok(await _categoryService.GetCategoryByOption(request));
+        }
+        
         [HttpPost("create-category")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequest request)
         {

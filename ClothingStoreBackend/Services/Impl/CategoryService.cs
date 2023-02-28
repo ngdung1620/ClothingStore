@@ -66,6 +66,54 @@ namespace ClothingStoreBackend.Services.Impl
             };
         }
 
+        public async Task<GetCategoryResponse> GetCategoryByOption(GetCategoryByOption request)
+        {
+            var category = await _context.Categories
+                .Include(c => c.Products)
+                .FirstOrDefaultAsync(c => c.Id == request.Id);
+            if (category == null)
+            {
+                throw new Exception("Thể loại này không tồn tại ");
+            }
+
+            var products = new List<ProductResponse>();
+            category.Products.ForEach(p =>
+            {
+                var product = new ProductResponse()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    Description = p.Description,
+                    Total = p.Total,
+                    Img = _configuration["Img:UrlImg"] + p.Img,
+                };
+                products.Add(product);
+            });
+             List<ProductResponse> listProduct;
+            if (request.OptionSelect == 0)
+            {
+                listProduct = products.OrderByDescending(p => p.PublicationDate).ToList();
+            } else if (request.OptionSelect == 1)
+            {
+                listProduct = products.OrderByDescending(p => p.Sold).ToList();
+            } else if (request.OptionSelect == 2)
+            {
+                listProduct = products.OrderBy(p => p.Price).ToList();
+            }
+            else
+            {
+                listProduct = products.OrderByDescending(p => p.Price).ToList();
+            }
+          
+            return new GetCategoryResponse()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Products = listProduct
+            };
+        }
+
         public async Task<CreateCategoryResponse> CreateCategory(CreateCategoryRequest request)
         {
             var groupCategory = await _context

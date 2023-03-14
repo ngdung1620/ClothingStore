@@ -444,7 +444,7 @@ namespace ClothingStoreBackend.Services.Impl
             else
             {
                 listOrder = await _context.Orders
-                    .Where(o => o.Status == 4 && (o.OrderDate >= request.StartTime && o.OrderDate <= request.FinishTime))
+                    .Where(o => o.Status == 4 && o.OrderDate >= request.StartTime && o.OrderDate < request.FinishTime.AddDays(1))
                     .Select(o => new OrderModel()
                     {
                         OrderId = o.Id,

@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using ClothingStoreBackend.Models.CategoryModels;
 using ClothingStoreBackend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace ClothingStoreBackend.Controllers
 {
@@ -16,13 +18,12 @@ namespace ClothingStoreBackend.Controllers
         {
             _categoryService = categoryService;
         }
-            
         [HttpGet("get-list-category")]
         public async Task<IActionResult> GetListCategory()
         {
             return Ok(await _categoryService.GetListCategory());
         }
-
+        
         [HttpGet("get-category/{id}")]
         public async Task<IActionResult> GetCategory(Guid id)
         {

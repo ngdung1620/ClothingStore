@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ClothingStoreBackend.Models
 {
     public class Product
     {
+        [Key]
         public Guid Id { get; set; }
+        
+        [Required]
         public string Name { get; set; }
+        
+        [Required]
         public double Price { get; set; }
+        
         public string Description { get; set; }
         public int Total { get; set; }
         public string Img { get; set; }

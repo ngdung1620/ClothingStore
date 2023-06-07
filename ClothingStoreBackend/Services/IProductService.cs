@@ -8,7 +8,8 @@ namespace ClothingStoreBackend.Services
 {
     public interface IProductService
     {
-        GetListProductResponse GetListProduct(GetListProductRequest request);
+        /*GetListProductResponse GetListProduct(GetListProductRequest request);*/
+        Task<GetListProductResponse> GetListProductByPagination(GetListProductRequest request);
         Task<List<ProductResponse>> GetAllProduct(GetAllProductRequest request);
         Task<GetProductResponse> GetProduct(Guid id);
         Task<CreateProductResponse> CreateProduct(CreateProductRequest request);

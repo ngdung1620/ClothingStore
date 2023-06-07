@@ -23,7 +23,7 @@ namespace ClothingStoreBackend.Services.Impl
             _configuration = configuration;
         }
 
-        public GetListProductResponse GetListProduct(GetListProductRequest request)
+        /*public GetListProductResponse GetListProduct(GetListProductRequest request)
         {
             var allProduct = _context.Products.AsQueryable();
             if (!String.IsNullOrEmpty(request.Search))
@@ -49,6 +49,54 @@ namespace ClothingStoreBackend.Services.Impl
                 PageSize = result.PageSize,
                 TotalRecords = allProduct.Count()
             };
+        }*/
+
+        public async Task<GetListProductResponse> GetListProductByPagination(GetListProductRequest request)
+        {
+            List<ProductResponse> listProduct;
+            int totalProduct = 0;
+            if (!string.IsNullOrEmpty(request.Search))
+            {
+                totalProduct = await _context.Products.CountAsync(p => p.Name.ToLower().Contains(request.Search.ToLower()));
+                listProduct = await _context.Products.Where(p => p.Name.ToLower().Contains(request.Search.ToLower()))
+                    .Skip((request.PageIndex-1) * request.PageSize).Take(request.PageSize)
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"]+p.Img
+                    })
+                    .ToListAsync();
+            }
+            else
+            {
+                totalProduct = await _context.Products.CountAsync();
+                listProduct = await _context.Products
+                    .Skip((request.PageIndex-1) * request.PageSize).Take(request.PageSize)
+                    .Select(p => new ProductResponse()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Description = p.Description,
+                        Total = p.Total,
+                        Img = _configuration["Img:UrlImg"]+p.Img
+                    })
+                    .ToListAsync();
+            }
+            
+            return new GetListProductResponse()
+            {
+                Products = listProduct,
+                TotalPage = (int) Math.Ceiling(totalProduct/(double)request.PageSize),
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                TotalRecords = totalProduct
+            };
+            
         }
 
         public async Task<List<ProductResponse>> GetAllProduct(GetAllProductRequest request)

@@ -24,7 +24,7 @@ namespace ClothingStoreBackend.Services.Impl
                 Id = Guid.NewGuid(),
                 Name = request.Name
             };
-             await _context.GroupCategories.AddAsync(newGroupCategory);
+            await _context.GroupCategories.AddAsync(newGroupCategory);
              await _context.SaveChangesAsync();
              return new CreateGroupCategoryResponse()
              {

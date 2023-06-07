@@ -24,10 +24,16 @@ namespace ClothingStoreBackend.Controllers
             return Ok(await _productService.CreateProduct(request));
         }
 
-        [HttpPost("get-list-product")]
+        /*[HttpPost("get-list-product")]
         public IActionResult GetListProduct([FromBody] GetListProductRequest request)
         {
             return Ok( _productService.GetListProduct(request));
+        }*/
+        
+        [HttpPost("get-list-product")]
+        public async Task<IActionResult> GetListProductByPagination([FromBody] GetListProductRequest request)
+        {
+            return Ok(await _productService.GetListProductByPagination(request));
         }
         
         [HttpPost("get-all-product")]
